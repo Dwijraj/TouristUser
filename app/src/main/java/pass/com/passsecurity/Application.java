@@ -8,20 +8,21 @@ package pass.com.passsecurity;
 
 public class Application {
 
-  public  String Name;
-  public  String Address;
-  public  String Mobile;
-  public  String ID_No;
-  public  String Purpose;
-  public  String ApplicantPhoto;
-  public   String ApplicantScanId;
-  public   String Uid;
-  public   String ApplicationStatus;
-  public   String DateOfBirth;
-  public  String DateOfJourney;
-  public  String Barcode_Image;
+    public  String Name;
+    public  String Address;
+    public  String Mobile;
+    public  String ID_No;
+    public  String Purpose;
+    public  String ApplicantPhoto;
+    public   String ApplicantScanId;
+    public   String Uid;
+    public   String ApplicationStatus;
+    public   String DateOfBirth;
+    public  String DateOfJourney;
+    public  String Barcode_Image;
+    public String ID_Source;
 
-    public Application(String name, String address, String mobile, String ID_No, String purpose, String applicantPhoto, String applicantScanId, String uid, String applicationStatus, String dateOfBirth, String dateOfJourney, String barcode_Image) {
+    public Application(String name, String address, String mobile, String ID_No, String purpose, String applicantPhoto, String applicantScanId, String uid, String applicationStatus, String dateOfBirth, String dateOfJourney,String barcode_Image,String id_source) {
         Name = name;
         Address = address;
         Mobile = mobile;
@@ -31,6 +32,7 @@ public class Application {
         ApplicantPhoto = applicantPhoto;
         ApplicantScanId = applicantScanId;
         Uid = uid;
+        ID_Source=id_source;
         ApplicationStatus = applicationStatus;
         DateOfBirth = dateOfBirth;
         DateOfJourney = dateOfJourney;

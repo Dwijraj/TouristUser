@@ -37,6 +37,7 @@ public class Display extends AppCompatActivity {
     private TextView Scan_id2;
     private ImageView Profile2;
     private  String pass;
+    private TextView ID_Sources;
     private TextView Application_status2;
     private DatabaseReference ApplicationRef2;
     private DatabaseReference UsersRef;
@@ -53,6 +54,7 @@ public class Display extends AppCompatActivity {
         Address2=(TextView)findViewById(R.id.SCAN_ADDRESS);
         Mobile2=(TextView)findViewById(R.id.SCAN_MOBILE);
         ID_No2=(TextView)findViewById(R.id.SCAN_ID);
+        ID_Sources=(TextView)findViewById(R.id.ID_Source);
         mAuth=FirebaseAuth.getInstance();
         Dateofbirth2=(TextView)findViewById(R.id.SCAN_DOB);
         Dateofjourney2=(TextView)findViewById(R.id.SCAN_DOJ);
@@ -69,59 +71,81 @@ public class Display extends AppCompatActivity {
         Log.v("Hello","Hello1");
 
 
-        ApplicationRef2.child(pass).addListenerForSingleValueEvent(new ValueEventListener() {
+        ApplicationRef2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                app=dataSnapshot.getValue(Application.class);  //App crasehs due to this line
-
-                Name2.setText(app.Name);
-                Address2.setText(app.Address);
-                Mobile2.setText(app.Mobile);
-                ID_No2.setText(app.ID_No);
-                Dateofbirth2.setText(app.DateOfBirth);
-                Dateofjourney2.setText(app.DateOfJourney);
-                Purpose2.setText(app.Purpose);
-                Application_status2.setText(app.ApplicationStatus.toUpperCase());
-
-
-
-                Glide.with(getApplicationContext())
-                        .load(app.ApplicantPhoto)
-                        .into(Profile2);
-
-
-                Glide.with(getApplicationContext())
-                        .load(app.ApplicantScanId)
-                        .into(scan_id2);
-
-
-                Log.v("Maina5",app.ApplicationStatus);
-
-                Check=app.ApplicationStatus.contains("Applied");
-
-                Log.v("Maina6",String.valueOf(Check));
-
-                if(app.ApplicationStatus.contains("Applied"))
+                if(dataSnapshot.hasChild(pass))
                 {
-                    UsersRef.child("Guards").addValueEventListener(new ValueEventListener() {
+
+                    ApplicationRef2.child(pass).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(final DataSnapshot dataSnapshot) {
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            if (dataSnapshot.hasChild(mAuth.getCurrentUser().getUid()))
+                            app=dataSnapshot.getValue(Application.class);  //App crasehs due to this line
+
+                            Name2.setText(app.Name);
+                            Address2.setText(app.Address);
+                            Mobile2.setText(app.Mobile);
+                            ID_No2.setText(app.ID_No);
+                            Dateofbirth2.setText(app.DateOfBirth);
+                            Dateofjourney2.setText(app.DateOfJourney);
+                            Purpose2.setText(app.Purpose);
+                            ID_Sources.setText(app.ID_Source);
+                            Application_status2.setText(app.ApplicationStatus.toUpperCase());
+
+
+
+                            Glide.with(getApplicationContext())
+                                    .load(app.ApplicantPhoto)
+                                    .into(Profile2);
+
+
+                            Glide.with(getApplicationContext())
+                                    .load(app.ApplicantScanId)
+                                    .into(scan_id2);
+
+
+                            Log.v("Maina5",app.ApplicationStatus);
+
+                            Check=app.ApplicationStatus.contains("Applied");
+
+                            Log.v("Maina6",String.valueOf(Check));
+
+                            if(app.ApplicationStatus.contains("Applied"))
                             {
-
-                                UsersRef.child("Guards").child(mAuth.getCurrentUser().getUid()).child("Name").addValueEventListener(new ValueEventListener() {
+                                UsersRef.child("Guards").addValueEventListener(new ValueEventListener() {
                                     @Override
-                                    public void onDataChange(DataSnapshot dataSnapshots) {
+                                    public void onDataChange(final DataSnapshot dataSnapshot) {
 
-                                        Time today = new Time(Time.getCurrentTimezone());
-                                        int Month=today.month+1;
-                                       // ApplicationRef2.child(pass).child("ApplicationStatus").setValue("Checked by"+dataSnapshot.getValue(String.class)+"On"+today.monthDay + "-"+(String.valueOf(Month)) + "-"+today.year+" at "+);
+                                        if (dataSnapshot.hasChild(mAuth.getCurrentUser().getUid()))
+                                        {
 
-                                        String mydate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
-                                        ApplicationRef2.child(pass).child("ApplicationStatus").setValue("Checked by "+dataSnapshots.getValue(String.class)+" on "+mydate);
-                                        UsersRef.child("Users").child(app.Uid).child("Applications").child(pass).setValue("Checked by "+dataSnapshots.getValue(String.class)+" on "+mydate);
+                                            UsersRef.child("Guards").child(mAuth.getCurrentUser().getUid()).child("Name").addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshots) {
+
+                                                    Time today = new Time(Time.getCurrentTimezone());
+                                                    int Month=today.month+1;
+                                                    // ApplicationRef2.child(pass).child("ApplicationStatus").setValue("Checked by"+dataSnapshot.getValue(String.class)+"On"+today.monthDay + "-"+(String.valueOf(Month)) + "-"+today.year+" at "+);
+
+                                                    String mydate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+                                                    ApplicationRef2.child(pass).child("ApplicationStatus").setValue("Checked by "+dataSnapshots.getValue(String.class)+" on "+mydate);
+                                                    UsersRef.child("Users").child(app.Uid).child("Applications").child(pass).setValue("Checked by "+dataSnapshots.getValue(String.class)+" on "+mydate);
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+
+                                        }
+                                        else
+                                        {
+                                            Toast.makeText(getApplicationContext(),"Application isn't verified ",Toast.LENGTH_SHORT).show();
+                                        }
 
                                     }
 
@@ -131,12 +155,16 @@ public class Display extends AppCompatActivity {
                                     }
                                 });
 
+                                //  ApplicationRef2.child(pass).child("ApplicationStatus");
+                            }
+                            else if(app.ApplicationStatus.contains("Checked by"))
+                            {
+                                Toast.makeText(getApplicationContext(),"Application verified",Toast.LENGTH_SHORT).show();
                             }
                             else
                             {
-                                Toast.makeText(getApplicationContext(),"Application isn't verified ",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(),"Application wasn't checked by guards ",Toast.LENGTH_SHORT).show();
                             }
-
                         }
 
                         @Override
@@ -145,16 +173,18 @@ public class Display extends AppCompatActivity {
                         }
                     });
 
-                  //  ApplicationRef2.child(pass).child("ApplicationStatus");
-                }
-                else if(app.ApplicationStatus.contains("Checked by"))
-                {
-                    Toast.makeText(getApplicationContext(),"Application verified",Toast.LENGTH_SHORT).show();
+
+
+
+
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(),"Application wasn't checked by guards ",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"No such application exists",Toast.LENGTH_SHORT).show();
+                    finish();
                 }
+
+
             }
 
             @Override
