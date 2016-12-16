@@ -29,6 +29,8 @@ public class Display extends AppCompatActivity {
     private Button Vehicle;
     private Button generatebarcode;
     private TextView Mobile2;
+    private TextView CarNumber;
+    private TextView DriverName;
     private TextView Dateofbirth2;
     private TextView Dateofjourney2;
     private TextView Transaction_Id2;
@@ -49,6 +51,8 @@ public class Display extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
 
+        CarNumber=(TextView)findViewById(R.id.car_num);
+        DriverName=(TextView)findViewById(R.id.driver_name);
         scan_id2=(ImageView)findViewById(R.id.SCAN_PIC) ;
         Name2=(TextView)findViewById(R.id.SCAN_NAME);
         Address2=(TextView)findViewById(R.id.SCAN_ADDRESS);
@@ -92,6 +96,8 @@ public class Display extends AppCompatActivity {
                             Dateofjourney2.setText(app.DateOfJourney);
                             Purpose2.setText(app.Purpose);
                             ID_Sources.setText(app.ID_Source);
+                            CarNumber.setText(app.Carnumber);
+                            DriverName.setText(app.Drivername);
                             Application_status2.setText(app.ApplicationStatus.toUpperCase());
 
 

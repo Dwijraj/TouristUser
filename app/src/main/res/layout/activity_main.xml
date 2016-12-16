@@ -8,14 +8,68 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:gravity="center"
     android:background="@color/colorPrimary"
     tools:context="pass.com.passsecurity.MainActivity">
 
-   <Button
-       android:layout_width="wrap_content"
-       android:layout_centerHorizontal="true"
-       android:layout_centerVertical="true"
-       android:text="SCAN"
-       android:id="@+id/scan"
-       android:layout_height="wrap_content" />
+   <LinearLayout
+       android:gravity="center"
+       android:orientation="vertical"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+
+      <LinearLayout
+          android:gravity="center"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+         <Button
+             android:layout_width="wrap_content"
+             android:layout_centerHorizontal="true"
+             android:layout_centerVertical="true"
+             android:text="SCAN"
+             android:id="@+id/scan"
+             android:layout_height="wrap_content" />
+
+
+      </LinearLayout>
+      <LinearLayout
+          android:layout_marginTop="30dp"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+         <View
+             android:layout_width="match_parent"
+             android:layout_height="2dp"
+             android:background="#ffff"
+            />
+
+
+      </LinearLayout>
+
+      <LinearLayout
+          android:layout_marginTop="30dp"
+          android:gravity="center"
+          android:orientation="vertical"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+         <EditText
+             android:background="#ffff"
+             android:id="@+id/PASS_NUMBER"
+             android:hint="Enter the pass Number"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content" />
+
+         <Button
+             android:id="@+id/Submit"
+             android:text="FETCH"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content" />
+
+
+      </LinearLayout>
+
+   </LinearLayout>
+
 </RelativeLayout>
