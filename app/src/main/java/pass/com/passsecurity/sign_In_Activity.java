@@ -107,7 +107,7 @@ public class sign_In_Activity extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(), "Signed in successful", Toast.LENGTH_SHORT).show();
 
                                         Intent Apply = new Intent(sign_In_Activity.this, MainActivity.class);
-                                        Apply.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        finish();
                                         startActivity(Apply);
 
 
