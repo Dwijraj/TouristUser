@@ -11,7 +11,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="pass.com.passsecurity.sign_In_Activity">
 
-    <RelativeLayout
+    <LinearLayout
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -36,6 +37,43 @@
 
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true">
+            <EditText
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:id="@+id/GATE_ID"
+                android:hint="Enter Gate ID"
+                android:background="#ffff" />
+
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true">
+            <EditText
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:id="@+id/GATE_PASSWORD"
+                android:hint="Enter Gate Password"
+                android:background="#ffff" />
+
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:id="@+id/LinearLayout_2"
@@ -76,7 +114,7 @@
 
         </LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 
 </RelativeLayout>
