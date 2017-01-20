@@ -138,7 +138,8 @@ public class sign_In_Activity extends AppCompatActivity {
                                                 }
                                                 else
                                                 {
-                                                    Toast.makeText(getApplicationContext(),"Wrong Gate ID",Toast.LENGTH_SHORT).show();
+                                                    prog.dismiss();
+                                                    Toast.makeText(getApplicationContext(),"Wrong Gate Password",Toast.LENGTH_SHORT).show();
                                                 }
 
                                             }
@@ -153,7 +154,7 @@ public class sign_In_Activity extends AppCompatActivity {
                                     else
                                     {
 
-                                        Log.v("Testing1","Test3");
+                                        prog.dismiss();
                                         Toast.makeText(getApplicationContext(),"Wrong Gate Id",Toast.LENGTH_SHORT).show();
                                     }
 

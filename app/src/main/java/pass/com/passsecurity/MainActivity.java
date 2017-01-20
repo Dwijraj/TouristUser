@@ -1,5 +1,7 @@
 package pass.com.passsecurity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,7 +26,9 @@ public class MainActivity extends AppCompatActivity {
     private Button FETCHING;
     private FirebaseAuth mAuth;
     private Button SCAN;
+    private Button SIGN_OUT;
     private EditText Pass;
+    private AlertDialog alertDialog;
     private DatabaseReference Mstorageref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +37,10 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth=FirebaseAuth.getInstance();
 
+
         FETCHING=(Button)findViewById(R.id.Submit);
         Pass=(EditText)findViewById(R.id.PASS_NUMBER);
+        SIGN_OUT=(Button)findViewById(R.id.Sign_out);
 
         if(mAuth.getCurrentUser()==null)
         {
@@ -55,6 +61,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        SIGN_OUT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+               AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        MainActivity.this);
+
+                alertDialogBuilder.setTitle("Confirm sign out");
+                alertDialogBuilder.setMessage("Are you sure you want to sign out?");
+                alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAuth.signOut();
+                        Intent NEW_SIGN= new Intent(getApplicationContext(),sign_In_Activity.class);
+                        finish();
+                        startActivity(NEW_SIGN);
+                    }
+                });
+                alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
+            }
+        });
 
         FETCHING.setOnClickListener(new View.OnClickListener() {
             @Override
