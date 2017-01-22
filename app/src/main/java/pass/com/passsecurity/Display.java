@@ -1,11 +1,14 @@
 package pass.com.passsecurity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.Time;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,8 +29,6 @@ public class Display extends AppCompatActivity {
     private ImageView scan_id2;
     private TextView Name2;
     private TextView Address2;
-    private Button Vehicle;
-    private Button generatebarcode;
     private TextView Mobile2;
     private TextView CarNumber;
     private TextView DriverName;
@@ -45,6 +46,8 @@ public class Display extends AppCompatActivity {
     private DatabaseReference UsersRef;
     private FirebaseAuth mAuth;
     private  Application app;
+    private int WIDTH_SCREEN;
+    private int HEIGHT_SCREEN;
     private boolean Check;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +75,26 @@ public class Display extends AppCompatActivity {
         Bundle extras=i.getExtras();
         pass=extras.getString("Pass");
 
-        Log.v("Hello","Hello1");
+        WindowManager wm = (WindowManager) Display.this.getSystemService(Context.WINDOW_SERVICE);
+        android.view.Display display = wm.getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+        WIDTH_SCREEN = metrics.widthPixels;
+        HEIGHT_SCREEN = metrics.heightPixels;
+
+
+        android.view.ViewGroup.LayoutParams layoutParams = Profile2.getLayoutParams();
+        layoutParams.width = WIDTH_SCREEN/2;
+        layoutParams.height = HEIGHT_SCREEN/3;
+        Profile2.setLayoutParams(layoutParams);
+
+        android.view.ViewGroup.LayoutParams layoutParamss = scan_id2.getLayoutParams();
+        layoutParamss.width = WIDTH_SCREEN/2;
+        layoutParamss.height = HEIGHT_SCREEN/3;
+        scan_id2.setLayoutParams(layoutParamss);
+
+
+
 
 
         ApplicationRef2.addValueEventListener(new ValueEventListener() {
@@ -112,11 +134,11 @@ public class Display extends AppCompatActivity {
                                     .into(scan_id2);
 
 
-                            Log.v("Maina5",app.ApplicationStatus);
+
 
                             Check=app.ApplicationStatus.contains("Applied");
 
-                            Log.v("Maina6",String.valueOf(Check));
+
 
                             if(app.ApplicationStatus.contains("Applied"))
                             {
