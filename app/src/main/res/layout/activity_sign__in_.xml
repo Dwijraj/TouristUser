@@ -21,19 +21,22 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:id="@+id/LinearLayout1"
+            android:weightSum="100"
+            android:gravity="center"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true">
-            <EditText
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
+
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:ems="10"
+                android:layout_weight="60"
+                android:textColor="#ffff"
+                android:gravity="center"
                 android:id="@+id/editText3"
-                android:hint="Enter Phone number"
-                android:background="#ffff" />
+                android:text="Phone number"
+                />
 
 
         </LinearLayout>
@@ -62,6 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true">
+
             <EditText
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
@@ -75,22 +79,26 @@
         </LinearLayout>
 
 
+
         <LinearLayout
-            android:id="@+id/LinearLayout_2"
+            android:layout_width="match_parent"
             android:layout_marginTop="20dp"
-            android:layout_width="wrap_content"
+            android:id="@+id/LinearLayout7"
+            android:weightSum="100"
+            android:gravity="center"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/LinearLayout1"
             android:layout_centerHorizontal="true">
-            <EditText
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
+
+            <TextView
+                android:layout_width="0dp"
+                android:minHeight="30dp"
+                android:gravity="center"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:ems="10"
+                android:layout_weight="60"
+                android:textColor="#ffff"
                 android:id="@+id/editText4"
-                android:hint="Enter Name"
-                android:background="#ffff" />
+                android:text="Phone number"
+                 />
 
 
         </LinearLayout>
@@ -99,6 +107,7 @@
         <LinearLayout
             android:gravity="center"
             android:layout_width="match_parent"
+            android:weightSum="100"
             android:layout_height="wrap_content"
             android:layout_below="@+id/LinearLayout_2"
             android:layout_centerHorizontal="true"
@@ -108,9 +117,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="LOGIN"
+                android:visibility="invisible"
                 android:id="@+id/button"
-
                 android:layout_below="@+id/editText3" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:text="ID SCAN"
+                android:visibility="invisible"
+                android:id="@+id/ID_SCAN"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 

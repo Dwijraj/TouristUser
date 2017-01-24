@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -21,6 +22,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class sign_In_Activity extends AppCompatActivity {
 
@@ -29,9 +32,10 @@ public class sign_In_Activity extends AppCompatActivity {
 
     private EditText GATE_ID_NUMBER;
     private EditText GATE_PASSWORD;
-    private EditText Phone;
-    private EditText Name;
+    private TextView Phone;
+    private TextView Name;
     private String gate_id;
+    private Button ID_SCAN_;
     private String gate_password;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthlistener;
@@ -46,11 +50,12 @@ public class sign_In_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign__in_);
 
+        ID_SCAN_=(Button)findViewById(R.id.ID_SCAN);
         mGateRef=FirebaseDatabase.getInstance().getReference().child("Gate");
         GATE_ID_NUMBER=(EditText)findViewById(R.id.GATE_ID);
         GATE_PASSWORD=(EditText)findViewById(R.id.GATE_PASSWORD);
-        Name=(EditText)findViewById(R.id.editText4);
-        Phone=(EditText)findViewById(R.id.editText3);
+        Name=(TextView)findViewById(R.id.editText4);
+        Phone=(TextView)findViewById(R.id.editText3);
         prog=new ProgressDialog(this);
         buttons=(Button)findViewById(R.id.button);
         mDatabaseref= FirebaseDatabase.getInstance().getReference();   //Points to the Users child  of the root parent
@@ -61,9 +66,38 @@ public class sign_In_Activity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
+                if(firebaseAuth!=null)
+                {
+                    buttons.setVisibility(View.VISIBLE);
+                    ID_SCAN_.setVisibility(View.VISIBLE);
+                }
 
             }
         };
+
+        mAuth.signInWithEmailAndPassword("admin@admin.com","Admin123").addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+
+
+                buttons.setVisibility(View.VISIBLE);
+                ID_SCAN_.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+
+
+        ID_SCAN_.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new IntentIntegrator(sign_In_Activity.this).initiateScan();
+
+            }
+        });
+
+
 
 
         buttons.setOnClickListener(new View.OnClickListener() {
@@ -190,6 +224,103 @@ public class sign_In_Activity extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+       /* if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+
+                final String GAURD_ID=result.getContents();
+
+                mDatabaseref.child("Guards").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        if (dataSnapshot.hasChild(GAURD_ID))
+                        {
+                            mDatabaseref.child("Guards").child(GAURD_ID).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    Gaurd_Details GD=dataSnapshot.getValue(Gaurd_Details.class);
+
+                                    Name.setText(GD.Name);
+                                    Phone.setText(GD.Contact);
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
+
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }*/
+
+
+        if(result != null) {
+            final String GAURD_ID="8hu9uJK5pqS3OwUqjZqGbbz8ESr2";
+
+            mDatabaseref.child("Guards").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.hasChild(GAURD_ID))
+                    {
+                        mDatabaseref.child("Guards").child(GAURD_ID).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                Gaurd_Details GD=dataSnapshot.getValue(Gaurd_Details.class);
+
+                                Name.setText(GD.Name);
+                                Phone.setText(GD.Contact);
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
 

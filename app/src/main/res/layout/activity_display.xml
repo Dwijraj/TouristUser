@@ -69,6 +69,37 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:weightSum="100"
+                    android:layout_height="70dp"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        android:layout_width="0dp"
+                        android:gravity="center"
+                        android:layout_weight="50"
+                        android:layout_height="match_parent"
+                        android:text="DESTINATION"
+                        android:textSize="19sp"
+                        android:textColor="#ffff" />
+
+                    <TextView
+                        android:layout_marginTop="0dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="50"
+                        android:textSize="19sp"
+                        android:layout_height="match_parent"
+                        android:text="Address"
+                        android:gravity="center_vertical"
+                        android:textColor="#ffff"
+                        android:id="@+id/DESTINATION"
+                        android:layout_marginLeft="20dp"/>
+
+
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:weightSum="100"
@@ -101,6 +132,40 @@
 
 
                 </LinearLayout>
+
+
+                <LinearLayout
+                    android:weightSum="100"
+                    android:layout_height="70dp"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        android:layout_width="0dp"
+                        android:gravity="center"
+                        android:layout_weight="50"
+                        android:layout_height="match_parent"
+                        android:text="GATE"
+                        android:textSize="19sp"
+                        android:textColor="#ffff"
+                        />
+
+                    <TextView
+                        android:layout_marginTop="0dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="50"
+                        android:textSize="19sp"
+                        android:layout_height="match_parent"
+                        android:text="Address"
+                        android:gravity="center_vertical"
+                        android:textColor="#ffff"
+                        android:id="@+id/GATE"
+                        android:layout_marginLeft="20dp"/>
+
+
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:weightSum="100"

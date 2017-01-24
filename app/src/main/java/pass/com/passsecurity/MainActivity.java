@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         Pass=(EditText)findViewById(R.id.PASS_NUMBER);
         SIGN_OUT=(Button)findViewById(R.id.Sign_out);
 
-        if(mAuth.getCurrentUser()==null)
+        if(mAuth.getCurrentUser()==null || mAuth.getCurrentUser().getEmail().equals("admin@admin.com"))
         {
             Intent SIGN_IN=new Intent(MainActivity.this,sign_In_Activity.class);
             finish();

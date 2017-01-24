@@ -34,7 +34,7 @@ public class Display extends AppCompatActivity {
     private TextView DriverName;
     private TextView Dateofbirth2;
     private TextView Dateofjourney2;
-    private TextView Transaction_Id2;
+    private TextView DESTINATION;
     private TextView ID_No2;
     private TextView Purpose2;
     private TextView Scan_id2;
@@ -45,6 +45,7 @@ public class Display extends AppCompatActivity {
     private DatabaseReference ApplicationRef2;
     private DatabaseReference UsersRef;
     private FirebaseAuth mAuth;
+    private TextView GATE_NUMBER;
     private  Application app;
     private int WIDTH_SCREEN;
     private int HEIGHT_SCREEN;
@@ -54,6 +55,8 @@ public class Display extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
 
+        GATE_NUMBER=(TextView) findViewById(R.id.GATE);
+        DESTINATION=(TextView)findViewById(R.id.DESTINATION);
         CarNumber=(TextView)findViewById(R.id.car_num);
         DriverName=(TextView)findViewById(R.id.driver_name);
         scan_id2=(ImageView)findViewById(R.id.SCAN_PIC) ;
@@ -110,6 +113,7 @@ public class Display extends AppCompatActivity {
 
                             app=dataSnapshot.getValue(Application.class);  //App crasehs due to this line
 
+                            GATE_NUMBER.setText(app.Gate);
                             Name2.setText(app.Name);
                             Address2.setText(app.Address);
                             Mobile2.setText(app.Mobile);
@@ -120,6 +124,7 @@ public class Display extends AppCompatActivity {
                             ID_Sources.setText(app.ID_Source);
                             CarNumber.setText(app.Carnumber);
                             DriverName.setText(app.Drivername);
+                            DESTINATION.setText(app.Destination);
                             Application_status2.setText(app.ApplicationStatus.toUpperCase());
 
 
