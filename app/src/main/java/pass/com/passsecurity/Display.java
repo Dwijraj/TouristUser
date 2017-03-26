@@ -15,14 +15,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+
+import mohitbadwal.rxconnect.RxConnect;
+import pass.com.passsecurity.Constants.Constants;
+import pass.com.passsecurity.Utils.JSONParser;
 
 public class Display extends AppCompatActivity {
 
@@ -42,19 +45,22 @@ public class Display extends AppCompatActivity {
     private  String pass;
     private TextView ID_Sources;
     private TextView Application_status2;
-    private DatabaseReference ApplicationRef2;
-    private DatabaseReference UsersRef;
-    private FirebaseAuth mAuth;
-    private TextView GATE_NUMBER;
-    private  Application app;
+   private TextView GATE_NUMBER;
     private int WIDTH_SCREEN;
+    private String APPLICATION_STATUS;
     private int HEIGHT_SCREEN;
     private boolean Check;
+    private RxConnect rxConnect;
+    private Button RETRY_BUTTON;
+    private String PassDetails;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
 
+        RETRY_BUTTON=(Button)findViewById(R.id.RETRY);
+        rxConnect=new RxConnect(this);
+        rxConnect.setCachingEnabled(false);
         GATE_NUMBER=(TextView) findViewById(R.id.GATE);
         DESTINATION=(TextView)findViewById(R.id.DESTINATION);
         CarNumber=(TextView)findViewById(R.id.car_num);
@@ -65,18 +71,17 @@ public class Display extends AppCompatActivity {
         Mobile2=(TextView)findViewById(R.id.SCAN_MOBILE);
         ID_No2=(TextView)findViewById(R.id.SCAN_ID);
         ID_Sources=(TextView)findViewById(R.id.ID_Source);
-        mAuth=FirebaseAuth.getInstance();
+
         Dateofbirth2=(TextView)findViewById(R.id.SCAN_DOB);
         Dateofjourney2=(TextView)findViewById(R.id.SCAN_DOJ);
         Purpose2=(TextView)findViewById(R.id.SCAN_REASON);
         Profile2=(ImageView)findViewById(R.id.SCAN_PROFILE);
         Application_status2=(TextView)findViewById(R.id.SCAN_STATUS);
-        ApplicationRef2= FirebaseDatabase.getInstance().getReference().child("Applications");//Points to the root directory of the Database
-        UsersRef=FirebaseDatabase.getInstance().getReference();
-
         Intent i=getIntent();
         Bundle extras=i.getExtras();
         pass=extras.getString("Pass");
+        PassDetails=extras.getString("PassDetails");
+
 
         WindowManager wm = (WindowManager) Display.this.getSystemService(Context.WINDOW_SERVICE);
         android.view.Display display = wm.getDefaultDisplay();
@@ -97,137 +102,143 @@ public class Display extends AppCompatActivity {
         scan_id2.setLayoutParams(layoutParamss);
 
 
+        try {
+
+            JSONObject jsonObject2=new JSONObject(PassDetails);
+
+            JSONObject jsonObject=jsonObject2.getJSONObject("application_info");
 
 
 
-        ApplicationRef2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            String Name= JSONParser.JSONValue(jsonObject,"applicant_name");
 
-                if(dataSnapshot.hasChild(pass))
-                {
-
-                    ApplicationRef2.child(pass).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            app=dataSnapshot.getValue(Application.class);  //App crasehs due to this line
-
-                            GATE_NUMBER.setText(app.Gate);
-                            Name2.setText(app.Name);
-                            Address2.setText(app.Address);
-                            Mobile2.setText(app.Mobile);
-                            ID_No2.setText(app.ID_No);
-                            Dateofbirth2.setText(app.DateOfBirth);
-                            Dateofjourney2.setText(app.DateOfJourney);
-                            Purpose2.setText(app.Purpose);
-                            ID_Sources.setText(app.ID_Source);
-                            CarNumber.setText(app.Carnumber);
-                            DriverName.setText(app.Drivername);
-                            DESTINATION.setText(app.Destination);
-                            Application_status2.setText(app.ApplicationStatus.toUpperCase());
+            String Address= JSONParser.JSONValue(jsonObject,"applicant_address");
 
 
-
-                            Glide.with(getApplicationContext())
-                                    .load(app.ApplicantPhoto)
-                                    .into(Profile2);
+            String PlaceOfVisit= JSONParser.JSONValue(jsonObject,"place_visting");
 
 
-                            Glide.with(getApplicationContext())
-                                    .load(app.ApplicantScanId)
-                                    .into(scan_id2);
+            String Mobile= JSONParser.JSONValue(jsonObject,"application_mobile");
 
 
+            String IDNumber= JSONParser.JSONValue(jsonObject,"applicant_id_no");
 
 
-                            Check=app.ApplicationStatus.contains("Applied");
+            String IDSource= JSONParser.JSONValue(jsonObject,"applicant_id_source");
+
+
+            String DateOfBirth= JSONParser.JSONValue(jsonObject,"dob");
+
+
+            String Purpose= JSONParser.JSONValue(jsonObject,"purpose_visting");
+
+
+            String DateOfJourney= JSONParser.JSONValue(jsonObject,"date_journey");
+
+
+            String Res= JSONParser.JSONValue(jsonObject,"Photo");
+
+            String Profile = Res.replaceAll("\"","");
+
+
+            String ResId= JSONParser.JSONValue(jsonObject,"Scan_id_photo");
+
+            String ScanId=ResId.replaceAll("\"","");
+
+
+            String ApplicationStatus=JSONParser.JSONValue(jsonObject,"paid_status");
+            APPLICATION_STATUS=ApplicationStatus;
 
 
 
-                            if(app.ApplicationStatus.contains("Applied"))
-                            {
-                                UsersRef.child("Guards").addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(final DataSnapshot dataSnapshot) {
-
-                                        if (dataSnapshot.hasChild(mAuth.getCurrentUser().getUid()))
-                                        {
-
-                                            UsersRef.child("Guards").child(mAuth.getCurrentUser().getUid()).child("Name").addValueEventListener(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(DataSnapshot dataSnapshots) {
-
-                                                    Time today = new Time(Time.getCurrentTimezone());
-                                                    int Month=today.month+1;
-                                                    // ApplicationRef2.child(pass).child("ApplicationStatus").setValue("Checked by"+dataSnapshot.getValue(String.class)+"On"+today.monthDay + "-"+(String.valueOf(Month)) + "-"+today.year+" at "+);
-
-                                                    String mydate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
-                                                    ApplicationRef2.child(pass).child("ApplicationStatus").setValue("Checked by "+dataSnapshots.getValue(String.class)+" on "+mydate);
-                                                    UsersRef.child("Users").child(app.Uid).child("Applications").child(pass).setValue("Checked by "+dataSnapshots.getValue(String.class)+" on "+mydate);
-
-                                                }
-
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
-
-                                                }
-                                            });
-
-                                        }
-                                        else
-                                        {
-                                            Toast.makeText(getApplicationContext(),"Application isn't verified ",Toast.LENGTH_SHORT).show();
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
-
-                                //  ApplicationRef2.child(pass).child("ApplicationStatus");
-                            }
-                            else if(app.ApplicationStatus.contains("Checked by"))
-                            {
-                                Toast.makeText(getApplicationContext(),"Application verified",Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Toast.makeText(getApplicationContext(),"Application wasn't checked by guards ",Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+            Name2.setText(Name);
+            Address2.setText(Address);
+            Mobile2.setText(Mobile);
+            ID_No2.setText(IDNumber);
+            Dateofbirth2.setText(DateOfBirth);
+            Dateofjourney2.setText(DateOfJourney);
+            Purpose2.setText(Purpose);
+            Application_status2.setText(ApplicationStatus.toUpperCase());
+            ID_Sources.setText(IDSource);
+            DESTINATION.setText(PlaceOfVisit);
 
 
+            Glide.with(getApplicationContext())
+                    .load(Profile)
+                    .into(Profile2);
 
 
+            Glide.with(getApplicationContext())
+                    .load(ScanId)
+                    .into(scan_id2);
 
+           changeApplicationStatus();
+
+            RETRY_BUTTON.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    changeApplicationStatus();
                 }
-                else
+            });
+
+
+
+            
+            
+
+        }catch (JSONException e)
+        {
+
+        }
+
+
+
+
+    }
+    public void changeApplicationStatus()
+    {
+        rxConnect.setParam("token_id",pass);
+        rxConnect.setParam("security_number",
+                getSharedPreferences(Constants.USER,MODE_PRIVATE).getString(Constants.SHARED_PREF_KEY,"DEFAULT"));
+        rxConnect.setParam("application_status",APPLICATION_STATUS);
+        rxConnect.setParam("security_name",
+                getSharedPreferences(Constants.USER,MODE_PRIVATE).getString(Constants.SHARED_PREF_KEY_NAME,"DEFAULT"));
+        rxConnect.setParam("check_time",new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(new Date(System.currentTimeMillis())));
+        rxConnect.execute(Constants.PASS_STATUS_CHANGE_URL, RxConnect.POST, new RxConnect.RxResultHelper() {
+            @Override
+            public void onResult(String result) {
+
+                try {
+                    JSONObject jsonObject=new JSONObject(result);
+                   if(jsonObject.getString("response_status").equals("1"))
+                   {
+                       RETRY_BUTTON.setEnabled(false);
+                       Toast.makeText(getApplicationContext(),"Application status updated",Toast.LENGTH_SHORT).show();
+
+                   }
+                   else if (jsonObject.getString("response_status").equals("2"))
+                   {
+                       Toast.makeText(getApplicationContext(),"Status couldn't be changed",Toast.LENGTH_SHORT).show();
+                   }
+
+
+                }catch (Exception e)
                 {
-                    Toast.makeText(getApplicationContext(),"No such application exists",Toast.LENGTH_SHORT).show();
-                    finish();
+
                 }
 
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onNoResult() {
+
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
 
             }
         });
-
-
-
-
     }
 }

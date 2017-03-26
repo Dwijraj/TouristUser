@@ -2,10 +2,12 @@ package pass.com.passsecurity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,315 +15,182 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import mohitbadwal.rxconnect.RxConnect;
+import pass.com.passsecurity.Constants.Constants;
+import pass.com.passsecurity.Utils.JSONParser;
 
 public class sign_In_Activity extends AppCompatActivity {
 
 
 
 
-    private EditText GATE_ID_NUMBER;
-    private EditText GATE_PASSWORD;
-    private TextView Phone;
-    private TextView Name;
-    private String gate_id;
-    private Button ID_SCAN_;
-    private String gate_password;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthlistener;
-    private Button buttons;
-    private TelephonyManager telephonyManager;                          //TelephonyManager Object to help fetch IMEI of the mobile
-    private ProgressDialog prog;
-    private DatabaseReference mDatabaseref;
-    private DatabaseReference mGateRef;
+    private Button Login,Scan;
+    private TextView GaurdName,GaurdPhone;
+    private EditText GateNumber,GatePassword;
+    private RxConnect rxConnect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign__in_);
-
-        ID_SCAN_=(Button)findViewById(R.id.ID_SCAN);
-        mGateRef=FirebaseDatabase.getInstance().getReference().child("Gate");
-        GATE_ID_NUMBER=(EditText)findViewById(R.id.GATE_ID);
-        GATE_PASSWORD=(EditText)findViewById(R.id.GATE_PASSWORD);
-        Name=(TextView)findViewById(R.id.editText4);
-        Phone=(TextView)findViewById(R.id.editText3);
-        prog=new ProgressDialog(this);
-        buttons=(Button)findViewById(R.id.button);
-        mDatabaseref= FirebaseDatabase.getInstance().getReference();   //Points to the Users child  of the root parent
-
-        // telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);  //Telephony manager object is initiated
-        mAuth=FirebaseAuth.getInstance();                           //Firebase Auth instance
-        mAuthlistener=new FirebaseAuth.AuthStateListener() {        //Firebase Auth Listener that checks if the user if logged in
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-                if(firebaseAuth!=null)
-                {
-                    buttons.setVisibility(View.VISIBLE);
-                    ID_SCAN_.setVisibility(View.VISIBLE);
-                }
-
-            }
-        };
-
-        mAuth.signInWithEmailAndPassword("admin@admin.com","Admin123").addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-            @Override
-            public void onSuccess(AuthResult authResult) {
+        rxConnect=new RxConnect(this);
+        rxConnect.setCachingEnabled(false);
 
 
-                buttons.setVisibility(View.VISIBLE);
-                ID_SCAN_.setVisibility(View.VISIBLE);
+        Login=(Button) findViewById(R.id.login);
+        Login.setEnabled(false);
+        Scan=(Button) findViewById(R.id.ID_SCAN);
 
-            }
-        });
+        GaurdName=(TextView) findViewById(R.id.GaurdName);
+        GaurdPhone=(TextView) findViewById(R.id.PhoneNumber);
+
+        GateNumber=(EditText) findViewById(R.id.GATE_ID);
+        GatePassword=(EditText) findViewById(R.id.GATE_PASSWORD);
 
 
-
-        ID_SCAN_.setOnClickListener(new View.OnClickListener() {
+        Scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 new IntentIntegrator(sign_In_Activity.this).initiateScan();
 
             }
         });
 
-
-
-
-        buttons.setOnClickListener(new View.OnClickListener() {
+        Login.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
 
-
-                if (!(Phone.getText().toString().isEmpty() && Name.getText().toString().isEmpty()&&GATE_ID_NUMBER.getText().toString().isEmpty()
-                        &&GATE_PASSWORD.getText().toString().isEmpty())) {            //makes sure that user enter his/her phone number
-                    prog.setMessage("Signing you..");
-
-
-
-                    Log.v("Testing1","Test");
-
-                    final String IMEI = Phone.getText().toString().trim();
-                    //  final String IMEI = "455567888344432";
-                    final String EMAIL = IMEI + "@" + IMEI + ".com";
-                    final String PASSWORD = IMEI;
-                    gate_id=GATE_ID_NUMBER.getText().toString().trim();
-                    gate_password=GATE_PASSWORD.getText().toString().trim();
-                    //   Toast.makeText(getApplicationContext(),IMEI,Toast.LENGTH_SHORT).show();
-
-
-                    Log.v("Testing1","Test1");
-
-                     prog.show();
-
-
-                    mAuth.signInWithEmailAndPassword(EMAIL, PASSWORD).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                String GateNumberVal=GateNumber.getText().toString().trim();
+                String GatePasswordVal=GatePassword.getText().toString().trim();
+                if(!(TextUtils.isEmpty(GateNumberVal)&&TextUtils.isEmpty(GatePasswordVal)))
+                {
+                    rxConnect.setParam("name",GaurdName.getText().toString().trim());
+                    rxConnect.setParam("phone_number",GaurdPhone.getText().toString().trim());
+                    rxConnect.setParam("gate_number",GateNumberVal);
+                    rxConnect.setParam("gate_password",GatePasswordVal);
+                    rxConnect.execute(Constants.GAURD_LOGIN_URL, RxConnect.POST, new RxConnect.RxResultHelper() {
                         @Override
-                        public void onSuccess(AuthResult authResult) {
+                        public void onResult(String result) {
 
+                            try
+                            {
+                                JSONObject jsonObject=new JSONObject(result);
 
+                                if(jsonObject.getString("response_status").equals("1"))///*&&(jsonObject.getString("mobile").equals(REGISTERED_MOBILE_NUBER))||jsonObject.getString("mobile").equals(REGISTERED_MOBILE_NUBER)*/)
+                                {
+                                    SharedPreferences.Editor Editor=getSharedPreferences(Constants.USER,MODE_PRIVATE).edit();
+                                    Editor.putString(Constants.SHARED_PREF_KEY,GaurdPhone.getText().toString().trim());
+                                    Editor.putString(Constants.SHARED_PREF_KEY_NAME,GaurdName.getText().toString().trim());
+                                    Editor.commit();
 
-
-                            mGateRef.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-
-
-                                    if(dataSnapshot.hasChild(gate_id))
-                                    {
-
-
-                                        Log.v("Testing1","Test2");
-                                        mGateRef.child(gate_id).addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                                String  PASSWORD_GATE=dataSnapshot.getValue(String.class);
-
-                                                if(PASSWORD_GATE.equals(gate_password))
-                                                {
-
-                                                    Log.v("Testing1","Test3");
-                                                    //  prog.show();
-
-                                                    prog.dismiss();
-
-                                                    Toast.makeText(getApplicationContext(), "Signed in successful", Toast.LENGTH_SHORT).show();
-
-                                                    Intent Apply = new Intent(sign_In_Activity.this, MainActivity.class);
-                                                    Apply.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                    finish();
-                                                    startActivity(Apply);
-
-
-
-
-                                                }
-                                                else
-                                                {
-                                                    prog.dismiss();
-                                                    Toast.makeText(getApplicationContext(),"Wrong Gate Password",Toast.LENGTH_SHORT).show();
-                                                }
-
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-
-                                            }
-                                        });
-
-                                    }
-                                    else
-                                    {
-
-                                        prog.dismiss();
-                                        Toast.makeText(getApplicationContext(),"Wrong Gate Id",Toast.LENGTH_SHORT).show();
-                                    }
-
+                                    Intent i=new Intent(sign_In_Activity.this,MainActivity.class);
+                                    finish();
+                                    startActivity(i);
 
                                 }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
+                                else if(jsonObject.getString("response_status").equals("3"))
+                                {
+                                    Toast.makeText(getApplicationContext(),"Gaurd Not Registered",Toast.LENGTH_SHORT).show();
                                 }
-                            });
-                                /*On successfully signing into the account the user is prompted to the apply pass activity*/
+                                else
+                                {
+                                    //   Toast.makeText(getApplicationContext(),"You are not authorized to view this pass",Toast.LENGTH_SHORT).show();
+                                }
 
+                            }catch (JSONException e)
+                            {
 
+                            }
 
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
 
-                            prog.dismiss();
-                            Toast.makeText(getApplicationContext(),"Couldn't sign you up please check internet settings", Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onNoResult() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
 
                         }
                     });
 
                 }
-                else
-                {
-                    Toast.makeText(getApplicationContext(),"Enter Phone number...",Toast.LENGTH_SHORT).show();
-                }
+
             }
         });
 
 
-    }
 
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-       /* if(result != null) {
+        if(result != null) {
             if(result.getContents() == null) {
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+                // Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
+                // Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
 
-                final String GAURD_ID=result.getContents();
-
-                mDatabaseref.child("Guards").addValueEventListener(new ValueEventListener() {
+                String RESULT=result.getContents();
+                rxConnect.setParam("Security_Gaurd_Id",RESULT);
+                rxConnect.execute(Constants.GAURD_DETAILS_URL, RxConnect.POST, new RxConnect.RxResultHelper() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onResult(String result) {
 
-                        if (dataSnapshot.hasChild(GAURD_ID))
+                        try
                         {
-                            mDatabaseref.child("Guards").child(GAURD_ID).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
+                            JSONObject jsonObject=new JSONObject(result);
 
-                                    Gaurd_Details GD=dataSnapshot.getValue(Gaurd_Details.class);
+                            if(jsonObject.getString("response_status").equals("1"))///*&&(jsonObject.getString("mobile").equals(REGISTERED_MOBILE_NUBER))||jsonObject.getString("mobile").equals(REGISTERED_MOBILE_NUBER)*/)
+                            {
+                                JSONObject jsonObject1=jsonObject.getJSONObject("gaurd_info");
 
-                                    Name.setText(GD.Name);
-                                    Phone.setText(GD.Contact);
+                                GaurdName.setText(JSONParser.JSONValue(jsonObject1,"name"));
+                                GaurdPhone.setText(JSONParser.JSONValue(jsonObject1,"phone_number"));
 
-                                }
+                                Login.setEnabled(true);
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
+                            }
+                            else if(jsonObject.getString("response_status").equals("3"))
+                            {
+                                Toast.makeText(getApplicationContext(),"Gaurd Not Registered",Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                             //   Toast.makeText(getApplicationContext(),"You are not authorized to view this pass",Toast.LENGTH_SHORT).show();
+                            }
 
-                                }
-                            });
+                        }catch (JSONException e)
+                        {
 
                         }
+                    }
+
+                    @Override
+                    public void onNoResult() {
 
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onError(Throwable throwable) {
 
                     }
                 });
 
 
 
-
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }*/
-
-
-        if(result != null) {
-            final String GAURD_ID="8hu9uJK5pqS3OwUqjZqGbbz8ESr2";
-
-            mDatabaseref.child("Guards").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    if (dataSnapshot.hasChild(GAURD_ID))
-                    {
-                        mDatabaseref.child("Guards").child(GAURD_ID).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                Gaurd_Details GD=dataSnapshot.getValue(Gaurd_Details.class);
-
-                                Name.setText(GD.Name);
-                                Phone.setText(GD.Contact);
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-
-
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
-
 }

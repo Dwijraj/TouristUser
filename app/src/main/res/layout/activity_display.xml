@@ -469,6 +469,18 @@
                         android:textColor="#ffff"/>
 
                 </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:id="@+id/RETRY"
+                        android:text="RETRY STATUS CHANGE"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
             </LinearLayout>
         </ScrollView>
 

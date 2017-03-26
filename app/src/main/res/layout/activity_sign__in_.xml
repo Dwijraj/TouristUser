@@ -15,10 +15,10 @@
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:id="@+id/layout_phone"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,8 +34,8 @@
                 android:layout_weight="60"
                 android:textColor="#ffff"
                 android:gravity="center"
-                android:id="@+id/editText3"
-                android:text="Phone number"
+                android:id="@+id/GaurdName"
+                android:text="Gaurd Name"
                 />
 
 
@@ -96,8 +96,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="60"
                 android:textColor="#ffff"
-                android:id="@+id/editText4"
-                android:text="Phone number"
+                android:id="@+id/PhoneNumber"
+                android:text="Phone Number"
                  />
 
 
@@ -117,14 +117,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="LOGIN"
-                android:visibility="invisible"
-                android:id="@+id/button"
+
+                android:id="@+id/login"
                 android:layout_below="@+id/editText3" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:text="ID SCAN"
-                android:visibility="invisible"
+
                 android:id="@+id/ID_SCAN"
                 android:layout_height="wrap_content" />
 

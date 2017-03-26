@@ -28,12 +28,9 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.google.firebase:firebase-auth:9.6.0'
-    compile 'com.google.firebase:firebase-core:9.6.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.google.firebase:firebase-database:9.6.0'
     compile 'com.google.firebase:firebase-crash:9.6.0'
-    compile 'com.google.firebase:firebase-storage:9.6.0'
+    compile 'mohitbadwal.rxconnect:rxconnect:1.0.36'
     compile 'com.google.android.gms:play-services-gcm:9.6.0'
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.journeyapps:zxing-android-embedded:3.4.0'
